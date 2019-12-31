@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="zn-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="blog">
+    <meta name="author" content="XuYunFeng">
+    <link rel="icon" href="favicon.ico">
+
+    <title>Cloud Edge</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <link href="css/ie10-viewport-bug-workaround.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="blog.css" rel="stylesheet">
+
+    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
+    <!--[if lt IE 9]><script src="js/ie8-responsive-file-warning.js"></script><![endif]-->
+    <script src="js/ie-emulation-modes-warning.js"></script>
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+
+    <div class="blog-masthead">
+      <div class="container">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">Xu's blog</a>
+          </div>
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+              <li class="active"><a href="#">Home</a></li>
+              <li><a href="#">About</a></li>
+              <li><a href="#">Contact</a></li>
+              <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                  <li><a href="#">Action</a></li>
+                  <li><a href="#">Another action</a></li>
+                  <li><a href="#">Something else here</a></li>
+                  <li role="separator" class="divider"></li>
+                  <li class="dropdown-header">Nav header</li>
+                  <li><a href="#">Separated link</a></li>
+                  <li><a href="#">One more separated link</a></li>
+                </ul>
+              </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right" >
+              <li class="active"><a href="./">Default <span class="sr-only">(current)</span></a></li>
+              <li><a href="../navbar-static-top/">Default</a></li>
+              <li id = "sign-in"><a href="signin.html" >LOGIN</a></li>
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div><!--/.container-fluid -->
+
+    </div>
+
+    <div class="container">
+
+      <div class="blog-header">
+        <h1 class="blog-title">EM</h1>
+        <p class="lead blog-description"></p>
+      </div>
+
+      <div class="row">
+
+        <div class="col-sm-8 blog-main">
+
+          <div class="blog-post">
+            <h2 class="blog-post-title">Leetcode 54. Spiral Matrix</h2>
+            <p class="blog-post-meta">May 27, 2019 by <a href="https://leetcode.com/xuyunfeng/">Xu Yunfeng</a></p>
+
+            <p>Description:Given a matrix of m x n elements (m rows, n columns), return all elements of the matrix in spiral order.</p>
+            <h3>Example:</h3>
+            <blockquote>
+              <p> <strong>Input:</strong></p>
+              [<hr>
+                [ 1, 2, 3 ],<hr>
+                [ 4, 5, 6 ],<hr>
+                [ 7, 8, 9 ]<hr>
+                ]
+              <p><strong>Output: </strong></p>
+              <p>[1,2,3,6,9,8,7,4,5]</p>
+            </blockquote>
+            <hr>
+            <h2>Soution</h2>
+            <p></p>
+            <h3>Approach 1: Simulation</h3>
+            <p>Draw the path that the spiral makes. We know that the path should turn clockwise whenever it would go out of bounds or into a cell that was previously visited.</p>
+            <pre><code>class Solution(object):
+    def spiralOrder(self, matrix):
+        if not matrix: return []
+        R, C = len(matrix), len(matrix[0])
+        seen = [[False] * C for _ in matrix]
+        ans = []
+        dr = [0, 1, 0, -1]
+        dc = [1, 0, -1, 0]
+        r = c = di = 0
+        for _ in range(R * C):
+            ans.append(matrix[r][c])
+            seen[r][c] = True
+            cr, cc = r + dr[di], c + dc[di]
+            if 0 <= cr < R and 0 <= cc < C and not seen[cr][cc]:
+                r, c = cr, cc
+            else:
+                di = (di + 1) % 4
+                r, c = r + dr[di], c + dc[di]
+        return ans</code></pre>
+            <h4>Complexity Analysis</h4>
+            <ul>
+              <li>Time Complexity: <em>O(N)</em>, where <em>N</em> is the total number of elements in the input matrix. We add every element in the matrix to our final answer.</li>
+              <li>Space Complexity: <em>O(N)</em>, the information stored in seen and in ans. </li>
+            </ul>
+            <h3>Approach 2: Layer-by-Layer</h3>
+            <p>The answer will be all the elements in clockwise order from the first-outer layer, followed by the elements from the second-outer layer, and so on.</p>
+            <pre><code>class Solution(object):
+    def spiralOrder(self, matrix):
+        def spiral_coords(r1, c1, r2, c2):
+            for c in range(c1, c2 + 1):
+                yield r1, c
+            for r in range(r1 + 1, r2 + 1):
+                yield r, c2
+            if r1 < r2 and c1 < c2:
+                for c in range(c2 - 1, c1, -1):
+                    yield r2, c
+                for r in range(r2, r1, -1):
+                    yield r, c1
+
+        if not matrix: return []
+        ans = []
+        r1, r2 = 0, len(matrix) - 1
+        c1, c2 = 0, len(matrix[0]) - 1
+        while r1 <= r2 and c1 <= c2:
+            for r, c in spiral_coords(r1, c1, r2, c2):
+                ans.append(matrix[r][c])
+            r1 += 1; r2 -= 1
+            c1 += 1; c2 -= 1
+        return ans
+
+            </code></pre>
+            <h4>Complexity Analysis</h4>
+            <ul>
+              <li>Time Complexity: <em>O(N)</em>, where <em>N</em> is the total number of elements in the input matrix. We add every element in the matrix to our final answer.</li>
+              <li>Space Complexity: <em>O(N)</em>, the information stored in </li>
+            </ul>
+          </div><!-- /.blog-post -->
+
+          <nav>
+            <ul class="pager">
+              <li><a href="#">Previous</a></li>
+              <li><a href="#">Next</a></li>
+            </ul>
+          </nav>
+
+        </div><!-- /.blog-main -->
+
+        <div class="col-sm-3 col-sm-offset-1 blog-sidebar">
+          <div class="sidebar-module sidebar-module-inset">
+            <h4>About</h4>
+            <p>Etiam porta <em>sem malesuada magna</em> mollis euismod. Cras mattis consectetur purus sit amet fermentum. Aenean lacinia bibendum nulla sed consectetur.</p>
+          </div>
+          <div class="sidebar-module">
+            <h4>Archives</h4>
+            <ol class="list-unstyled">
+              <li><a href="#">March 2014</a></li>
+              <li><a href="#">February 2014</a></li>
+              <li><a href="#">January 2014</a></li>
+              <li><a href="#">December 2013</a></li>
+              <li><a href="#">November 2013</a></li>
+              <li><a href="#">October 2013</a></li>
+              <li><a href="#">September 2013</a></li>
+              <li><a href="#">August 2013</a></li>
+              <li><a href="#">July 2013</a></li>
+              <li><a href="#">June 2013</a></li>
+              <li><a href="#">May 2013</a></li>
+              <li><a href="#">April 2013</a></li>
+            </ol>
+          </div>
+          <div class="sidebar-module">
+            <h4>Elsewhere</h4>
+            <ol class="list-unstyled">
+              <li><a href="#">GitHub</a></li>
+              <li><a href="#">Twitter</a></li>
+              <li><a href="#">Facebook</a></li>
+            </ol>
+          </div>
+        </div><!-- /.blog-sidebar -->
+
+      </div><!-- /.row -->
+
+    </div><!-- /.container -->
+
+    <footer class="blog-footer">
+      <p>Blog template built for <a href="http://getbootstrap.com">Bootstrap</a> by <a href="https://twitter.com/mdo">@mdo</a>.</p>
+      <p>
+        <a href="#">Back to top</a>
+      </p>
+    </footer>
+
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')</script>
+    <script src="js/bootstrap.min.js"></script>
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <script src="js/ie10-viewport-bug-workaround.js"></script>
+  </body>
+</html>
